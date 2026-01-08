@@ -1,0 +1,15 @@
+[Unit]
+Description=Size Reducer Worker
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/size-reducer
+EnvironmentFile=/opt/size-reducer/.env
+ExecStart=/opt/size-reducer/.venv/bin/python -m worker.main
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

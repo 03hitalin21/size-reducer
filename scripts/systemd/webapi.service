@@ -1,0 +1,15 @@
+[Unit]
+Description=Size Reducer Web API
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/size-reducer
+EnvironmentFile=/opt/size-reducer/.env
+ExecStart=/opt/size-reducer/.venv/bin/uvicorn webapi.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
