@@ -129,7 +129,12 @@ def main() -> None:
     uploads_dir = Path(settings.storage_path) / "uploads"
     ensure_dir(uploads_dir)
 
-    application = Application.builder().token(settings.telegram_bot_token).build()
+    builder = Application.builder().token(settings.telegram_bot_token)
+    if settings.telegram_api_base_url:
+        builder = builder.base_url(settings.telegram_api_base_url)
+    if settings.telegram_file_base_url:
+        builder = builder.base_file_url(settings.telegram_file_base_url)
+    application = builder.build()
     application.bot_data["settings"] = settings
     application.bot_data["uploads_dir"] = uploads_dir
 
@@ -141,17 +146,18 @@ def main() -> None:
         MessageHandler(filters.VIDEO | filters.Document.ALL, handle_media)
     )
 
-    if settings.telegram_webhook_url:
-        parsed = urlparse(settings.telegram_webhook_url)
-        url_path = parsed.path.lstrip("/") or "telegram"
-        application.run_webhook(
-            listen=settings.bot_listen_host,
-            port=settings.bot_listen_port,
-            url_path=url_path,
-            webhook_url=settings.telegram_webhook_url,
-        )
-    else:
-        application.run_polling()
+    if not settings.telegram_webhook_url:
+        raise RuntimeError("TELEGRAM_WEBHOOK_URL is required for webhook mode")
+
+    parsed = urlparse(settings.telegram_webhook_url)
+    url_path = parsed.path.lstrip("/") or "telegram"
+    application.run_webhook(
+        listen=settings.bot_listen_host,
+        port=settings.bot_listen_port,
+        url_path=url_path,
+        webhook_url=settings.telegram_webhook_url,
+        secret_token=settings.telegram_webhook_secret,
+    )
 
 
 if __name__ == "__main__":

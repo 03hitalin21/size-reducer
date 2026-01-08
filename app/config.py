@@ -20,6 +20,9 @@ def _get_str(name: str, default: str) -> str:
 class Settings:
     telegram_bot_token: str | None
     telegram_webhook_url: str | None
+    telegram_api_base_url: str | None
+    telegram_file_base_url: str | None
+    telegram_webhook_secret: str | None
     base_url: str
     sqlite_path: str
     storage_path: str
@@ -37,6 +40,9 @@ def load_settings() -> Settings:
     return Settings(
         telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN"),
         telegram_webhook_url=os.getenv("TELEGRAM_WEBHOOK_URL"),
+        telegram_api_base_url=os.getenv("TELEGRAM_API_BASE_URL"),
+        telegram_file_base_url=os.getenv("TELEGRAM_FILE_BASE_URL"),
+        telegram_webhook_secret=os.getenv("TELEGRAM_WEBHOOK_SECRET"),
         base_url=_get_str("BASE_URL", "http://localhost:8000"),
         sqlite_path=_get_str("SQLITE_PATH", "db/jobs.sqlite"),
         storage_path=_get_str("STORAGE_PATH", "storage"),
